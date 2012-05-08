@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/s.css" type="text/css"/>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+    {% block extra_head %}{% endblock %}
+    <title>{% block title %} {% endblock %} | SponsorBar</title>
+</head>
+
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">SponsorBar</a>
+
+            {% if request.user.is_authenticated %}
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="#">Profile</a></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="{% url django.contrib.auth.views.logout %}">Logout</a></li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            {% include "messages.html" %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <hr/>
+    <footer>
+        <p>&copy; SponsorBar</p>
+    </footer>
+</div>
+</body>
+</html>

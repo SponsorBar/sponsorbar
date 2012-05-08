@@ -1,0 +1,12 @@
+{% extends "registration/registration_base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Register for an account{% endblock %}
+{% block content %}
+    <h1>Registration</h1>
+    <form class="form-horizontal" method='post' action=''>{% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Send activation email</button>
+        </div>
+    </form>
+{% endblock %}

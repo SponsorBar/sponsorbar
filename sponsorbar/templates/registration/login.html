@@ -1,0 +1,28 @@
+{% extends "registration/registration_base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h1>Login</h1>
+{% if form.errors %}
+    <div class="alert alert-error">Your username and password didn't match. Please try again.</div>
+{% endif %}
+
+<form class="form-horizontal" method="post" action="{% url django.contrib.auth.views.login %}">{% csrf_token %}
+    {{ form|crispy }}
+    <div class="clearfix control-group">
+        <div class="controls">
+            <p class="help-block"><a href="{% url auth_password_reset %}">Forgot</a> your password?  <a href="{% url registration_register %}">Need an account</a>?</p>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Login</button>
+        or
+        <a href="{% url socialauth_begin "twitter" %}" class="btn">Login with twitter</a>
+        <a href="{% url socialauth_begin "facebook" %}" class="btn">Login with facebook</a>
+        <a href="{% url socialauth_begin "google-oauth" %}" class="btn">Login with google</a>
+    </div>
+
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+{% endblock %}

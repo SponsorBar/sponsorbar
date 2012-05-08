@@ -1,20 +1,25 @@
-# Django settings for sponsorbar project.
+# Django settings for goals project.
+import os
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+# force removal of mysite.fcgi from URL
+FORCE_SCRIPT_NAME = ''
+
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Andrey Zhukov', 'sneawo@gmail.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'sponsorbar',                      # Or path to database file if using sqlite3.
+        'USER': 'sponsorbar',                      # Not used with sqlite3.
+        'PASSWORD': 'Sb?s~x1ZOhy4xz',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -44,22 +49,22 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, '..', 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(PROJECT_ROOT, '..', 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -67,9 +72,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_ROOT, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -90,6 +93,17 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.core.context_processors.request",
+    "django.contrib.messages.context_processors.messages"
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -106,9 +120,7 @@ ROOT_URLCONF = 'sponsorbar.urls'
 WSGI_APPLICATION = 'sponsorbar.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -118,11 +130,37 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admin',
+    'south',
+    'django_extensions',
+    'social_auth',
+    'crispy_forms',
+    'registration',
+    'sorl.thumbnail',
 )
+
+# registration
+ACCOUNT_ACTIVATION_DAYS = 7
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+GOOGLE_CONSUMER_KEY          = 'anonymous'
+GOOGLE_CONSUMER_SECRET       = 'anonymous'
+TWITTER_CONSUMER_KEY         = 'K0Z6z3Gsa17lPsZczM2pFw'
+TWITTER_CONSUMER_SECRET      = '3CazTzBz6f3SMnsFnqo7mgSw3iLTBk2f9DZqU0M1CoI'
+FACEBOOK_APP_ID              = '394236357276044'
+FACEBOOK_API_SECRET          = '678984332376f349bef4a7bff08fa8be'
+FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'offline_access', 'user_about_me', 'user_birthday', 'user_hometown']
+
+SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -152,3 +190,19 @@ LOGGING = {
         },
     }
 }
+
+from settings_local import *
+
+if DEBUG:
+    MIDDLEWARE_CLASSES += (
+            'debug_toolbar.middleware.DebugToolbarMiddleware',
+        )
+    INTERNAL_IPS = ('127.0.0.1', '88.170.124.68')
+    INSTALLED_APPS += ('debug_toolbar', )
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+        #'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
+        #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
+        #'HIDE_DJANGO_SQL': False,
+        #'TAG': 'div',
+    }
